@@ -1,10 +1,10 @@
 <?php
 
-namespace Kraken\SSH;
+namespace Dazzle\SSH;
 
-use Kraken\Event\EventEmitterInterface;
-use Kraken\Loop\LoopResourceInterface;
-use Kraken\Throwable\Exception\LogicException;
+use Dazzle\Event\EventEmitterInterface;
+use Dazzle\Loop\LoopResourceInterface;
+use Dazzle\Throwable\Exception\LogicException;
 
 /**
  * Interface SSH2DriverInterface

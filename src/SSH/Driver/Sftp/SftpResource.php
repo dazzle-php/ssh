@@ -1,15 +1,15 @@
 <?php
 
-namespace Kraken\SSH\Driver\Sftp;
+namespace Dazzle\SSH\Driver\Sftp;
 
-use Kraken\Loop\LoopAwareTrait;
-use Kraken\SSH\SSH2DriverInterface;
-use Kraken\SSH\SSH2ResourceInterface;
-use Kraken\Stream\Stream;
-use Kraken\Throwable\Exception\Runtime\ReadException;
-use Kraken\Throwable\Exception\Runtime\WriteException;
-use Kraken\Util\Buffer\Buffer;
-use Kraken\Util\Buffer\BufferInterface;
+use Dazzle\Loop\LoopAwareTrait;
+use Dazzle\SSH\SSH2DriverInterface;
+use Dazzle\SSH\SSH2ResourceInterface;
+use Dazzle\Stream\Stream;
+use Dazzle\Throwable\Exception\Runtime\ReadException;
+use Dazzle\Throwable\Exception\Runtime\WriteException;
+use Dazzle\Util\Buffer\Buffer;
+use Dazzle\Util\Buffer\BufferInterface;
 use Error;
 use Exception;
 

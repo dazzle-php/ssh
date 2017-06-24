@@ -1,14 +1,13 @@
 {
-    "name": "kraken-php/ssh",
-    "description": "Kraken Asynchronous SSH.",
+    "name": "dazzle-php/ssh",
+    "description": "Dazzle Asynchronous SSH.",
     "keywords": [
-        "kraken", "kraken-php", "async", "asynchronous", "ssh", "ssh2", "driver"
+        "dazzle", "dazzle-php", "async", "asynchronous", "ssh", "ssh2", "driver"
     ],
     "license": "MIT",
-    "homepage": "http://kraken-php.com",
     "support": {
-        "issues": "https://github.com/kraken-php/framework/issues",
-        "source": "https://github.com/kraken-php/framework"
+        "issues": "https://github.com/dazzle-php/ssh/issues",
+        "source": "https://github.com/dazzle-php/ssh"
     },
     "authors": [
         {
@@ -17,23 +16,27 @@
         },
         {
             "name":     "The contributors",
-            "homepage": "http://github.com/kraken-php/framework/contributors"
+            "homepage": "http://github.com/dazzle-php/ssh/contributors"
         }
     ],
     "require": {
         "php": ">=5.6.7",
-        "kraken-php/event": "0.4.*",
-        "kraken-php/loop": "0.4.*",
-        "kraken-php/stream": "0.4.*",
-        "kraken-php/throwable": "0.4.*",
-        "kraken-php/util": "0.4.*"
+        "dazzle-php/event": "0.5.*",
+        "dazzle-php/loop": "0.5.*",
+        "dazzle-php/stream": "0.5.*",
+        "dazzle-php/throwable": "0.5.*",
+        "dazzle-php/util": "0.5.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8.0 <5.4.0"
     },
     "suggest": {
         "ext-ssh2": "*"
     },
     "autoload": {
         "psr-4": {
-            "Kraken\\SSH\\": "src"
+            "Dazzle\\SSH\\": "src/Event",
+            "Dazzle\\SSH\\Test\\": "test"
         }
     },
     "extra": {

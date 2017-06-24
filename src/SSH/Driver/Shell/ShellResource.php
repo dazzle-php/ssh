@@ -1,13 +1,13 @@
 <?php
 
-namespace Kraken\SSH\Driver\Shell;
+namespace Dazzle\SSH\Driver\Shell;
 
-use Kraken\Event\BaseEventEmitterTrait;
-use Kraken\Loop\LoopInterface;
-use Kraken\SSH\SSH2DriverInterface;
-use Kraken\SSH\SSH2ResourceInterface;
-use Kraken\Throwable\Exception\Runtime\ReadException;
-use Kraken\Throwable\Exception\Runtime\WriteException;
+use Dazzle\Event\BaseEventEmitterTrait;
+use Dazzle\Loop\LoopInterface;
+use Dazzle\SSH\SSH2DriverInterface;
+use Dazzle\SSH\SSH2ResourceInterface;
+use Dazzle\Throwable\Exception\Runtime\ReadException;
+use Dazzle\Throwable\Exception\Runtime\WriteException;
 use Error;
 use Exception;
 

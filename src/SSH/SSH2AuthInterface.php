@@ -1,6 +1,6 @@
 <?php
 
-namespace Kraken\SSH;
+namespace Dazzle\SSH;
 
 interface SSH2AuthInterface
 {

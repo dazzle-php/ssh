@@ -1,20 +1,21 @@
 <?php
 
-namespace Kraken\SSH\Driver;
+namespace Dazzle\SSH\Driver;
 
-use Kraken\Event\BaseEventEmitterTrait;
-use Kraken\Loop\Timer\TimerInterface;
-use Kraken\Loop\LoopAwareTrait;
-use Kraken\SSH\Driver\Shell\ShellResource;
-use Kraken\SSH\SSH2;
-use Kraken\SSH\SSH2DriverInterface;
-use Kraken\SSH\SSH2Interface;
-use Kraken\SSH\SSH2ResourceInterface;
-use Kraken\Throwable\Exception\Logic\ResourceUndefinedException;
-use Kraken\Throwable\Exception\Runtime\ExecutionException;
-use Kraken\Throwable\Exception\Runtime\ReadException;
+use Dazzle\Event\BaseEventEmitterTrait;
+use Dazzle\Loop\Timer\TimerInterface;
+use Dazzle\Loop\LoopAwareTrait;
+use Dazzle\SSH\Driver\Sftp\SftpResource;
+use Dazzle\SSH\SSH2DriverInterface;
+use Dazzle\SSH\SSH2Interface;
+use Dazzle\SSH\SSH2ResourceInterface;
+use Dazzle\Throwable\Exception\Logic\ResourceUndefinedException;
+use Dazzle\Throwable\Exception\Runtime\ExecutionException;
+use Error;
+use Exception;
 
-class Shell implements SSH2DriverInterface
+
+class Sftp implements SSH2DriverInterface
 {
     use BaseEventEmitterTrait;
     use LoopAwareTrait;
@@ -45,7 +46,7 @@ class Shell implements SSH2DriverInterface
     protected $resource;
 
     /**
-     * @var ShellResource[]|SSH2ResourceInterface[]
+     * @var SftpResource[]|SSH2ResourceInterface[]
      */
     protected $resources;
 
@@ -105,6 +106,8 @@ class Shell implements SSH2DriverInterface
     public function __destruct()
     {
         $this->disconnect();
+
+
     }
 
     /**
@@ -113,7 +116,7 @@ class Shell implements SSH2DriverInterface
      */
     public function getName()
     {
-        return SSH2::DRIVER_SHELL;
+        return 'sftp';
     }
 
     /**
@@ -127,15 +130,15 @@ class Shell implements SSH2DriverInterface
             return;
         }
 
-        $shell = $this->createConnection($this->conn);
+        $resource = $this->createConnection($this->conn);
 
-        if (!$shell || !is_resource($shell))
+        if (!$resource || !is_resource($resource))
         {
-            $this->emit('error', [ $this, new ExecutionException('SSH2:Shell could not be connected.') ]);
+            $this->emit('error', [ $this, new ExecutionException('SSH2:Sftp could not be connected.') ]);
             return;
         }
 
-        $this->resource = $shell;
+        $this->resource = $resource;
 
         $this->emit('connect', [ $this ]);
     }
@@ -226,7 +229,14 @@ class Shell implements SSH2DriverInterface
             throw new ResourceUndefinedException('Tried to open resource before establishing SSH2 connection!');
         }
 
-        $resource = new ShellResource($this, $this->resource);
+        $stream = @fopen("ssh2.sftp://" . $this->resource . $resource, $flags);
+
+        if (!$stream)
+        {
+            throw new ResourceUndefinedException("Access to SFTP resource [$resource] denied!");
+        }
+
+        $resource = new SftpResource($this, $stream);
         $resource->on('open', function(SSH2ResourceInterface $resource) {
             $this->emit('resource:open', [ $this, $resource ]);
         });
@@ -243,109 +253,53 @@ class Shell implements SSH2DriverInterface
     }
 
     /**
-     * Handle data.
+     * Determine whether connection is still open.
      *
      * @internal
      */
     public function handleHeartbeat()
     {
-        if (fwrite($this->resource, "\n") === 0)
+        $fp = @fopen("ssh2.sftp://" . $this->resource . "/.", "r");
+
+        if (!$fp || !is_resource($fp))
         {
             return $this->ssh2->disconnect();
         }
 
-        $this->handleRead();
+        fclose($fp);
+
+        $this->handleData();
     }
 
     /**
-     * Handle incoming data.
+     * Handle data.
      *
      * @internal
      */
-    protected function handleRead()
+    public function handleData()
     {
-        if ($this->paused)
+        if ($this->paused || $this->resourcesCounter === 0)
         {
             return;
         }
 
-        $data = @fread($this->resource, static::BUFFER_SIZE);
-
-        if ($data === false || $data === '')
+        // handle all reading
+        foreach ($this->resources as $resource)
         {
-            return;
-        }
-
-        $this->buffer .= $data;
-
-        while ($this->buffer !== '')
-        {
-            if ($this->prefix !== '' && !isset($this->resources[$this->prefix]))
+            if (!$resource->isPaused() && $resource->isReadable())
             {
-                $this->prefix = '';
-            }
-
-            if ($this->prefix === '')
-            {
-                if (!preg_match('/([a-zA-Z0-9]{32})\r?\n(.*)/s', $this->buffer, $matches))
-                {
-                    return;
-                }
-
-                $this->prefix = $matches[1];
-                $this->buffer = $matches[2];
-            }
-
-            $resource = $this->resources[$this->prefix];
-            $data = '';
-            $status = -1;
-            $successSuffix = $resource->getSuccessSuffix();
-            $failureSuffix = $resource->getFailureSuffix();
-
-            $this->buffer = preg_replace_callback(
-                sprintf('/(.*)(%s|%s):(\d*)\r?\n/s', $successSuffix, $failureSuffix),
-                function($matches) use($resource, &$data, &$status) {
-                    $data   = $matches[1];
-                    $status = (int) $matches[3];
-                    return '';
-                },
-                $this->buffer
-            );
-
-            if ($status === -1)
-            {
-                $data = $this->buffer;
-                $this->buffer = '';
-            }
-            else
-            {
-                $this->removeResource($this->prefix);
-                $this->prefix = '';
-            }
-
-            $parts = str_split($data, $resource->getBufferSize());
-            unset($data);
-
-            foreach ($parts as &$part)
-            {
-                $resource->emit('data', [ $resource, $part ]);
-            }
-            unset($parts);
-            unset($part);
-
-            if ($status === 0)
-            {
-                $resource->emit('end', [ $resource ]);
-                $resource->close();
-            }
-            else if ($status > 0)
-            {
-                $resource->emit('error', [ $resource, new ReadException($status) ]);
-                $resource->close();
+                $resource->handleRead();
             }
         }
 
-        $this->handleRead();
+        // handle all writing
+        foreach ($this->resources as $resource)
+        {
+            if (!$resource->isPaused() && $resource->isWritable())
+            {
+                $resource->handleWrite();
+            }
+        }
     }
 
     /**

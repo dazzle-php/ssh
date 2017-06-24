@@ -1,6 +1,6 @@
 <?php
 
-namespace Kraken\SSH;
+namespace Dazzle\SSH;
 
 class SSH2Config implements SSH2ConfigInterface
 {

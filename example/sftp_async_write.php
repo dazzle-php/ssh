@@ -8,19 +8,19 @@
  * ---------------------------------------------------------------------------------------------------------------------
  */
 
-require __DIR__ . '/../../autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-use Kraken\Loop\Model\SelectLoop;
-use Kraken\Loop\Loop;
-use Kraken\SSH\Auth\SSH2Password;
-use Kraken\SSH\SSH2;
-use Kraken\SSH\SSH2Config;
-use Kraken\SSH\SSH2DriverInterface;
-use Kraken\SSH\SSH2Interface;
-use Kraken\SSH\SSH2ResourceInterface;
+use Dazzle\Loop\Model\SelectLoop;
+use Dazzle\Loop\Loop;
+use Dazzle\SSH\Auth\SSH2Password;
+use Dazzle\SSH\SSH2;
+use Dazzle\SSH\SSH2Config;
+use Dazzle\SSH\SSH2DriverInterface;
+use Dazzle\SSH\SSH2Interface;
+use Dazzle\SSH\SSH2ResourceInterface;
 
-$user = getenv('TEST_USER') ? getenv('TEST_USER') : 'kraken';
-$pass = getenv('TEST_PASS') ? getenv('TEST_PASS') : 'kraken-1234';
+$user = getenv('TEST_USER') ? getenv('TEST_USER') : 'Dazzle';
+$pass = getenv('TEST_PASS') ? getenv('TEST_PASS') : 'Dazzle-1234';
 
 $loop   = new Loop(new SelectLoop);
 $auth   = new SSH2Password($user, $pass);
@@ -30,7 +30,7 @@ $ssh2   = new SSH2($auth, $config, $loop);
 $ssh2->on('connect:sftp', function(SSH2DriverInterface $sftp) use($loop, $ssh2) {
     echo "# CONNECTED SFTP\n";
 
-    $lines = [ "KRAKEN\n", "IS\n", "AWESOME!\n" ];
+    $lines = [ "DAZZLE\n", "IS\n", "AWESOME!\n" ];
     $linesPointer = 0;
 
     $file = $sftp->open(__DIR__ . '/_file_write.txt', 'w+');

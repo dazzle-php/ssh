@@ -1,8 +1,8 @@
 <?php
 
-namespace Kraken\SSH\Auth;
+namespace Dazzle\SSH\Auth;
 
-use Kraken\SSH\SSH2AuthInterface;
+use Dazzle\SSH\SSH2AuthInterface;
 
 /**
  * Password based SSH2 authentication

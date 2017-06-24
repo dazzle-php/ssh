@@ -1,14 +1,14 @@
 <?php
 
-namespace Kraken\SSH;
+namespace Dazzle\SSH;
 
-use Kraken\Event\BaseEventEmitterTrait;
-use Kraken\Loop\LoopAwareTrait;
-use Kraken\Loop\LoopInterface;
-use Kraken\SSH\Driver\Sftp;
-use Kraken\SSH\Driver\Shell;
-use Kraken\Throwable\Exception\Logic\InvalidArgumentException;
-use Kraken\Throwable\Exception\Runtime\ExecutionException;
+use Dazzle\Event\BaseEventEmitterTrait;
+use Dazzle\Loop\LoopAwareTrait;
+use Dazzle\Loop\LoopInterface;
+use Dazzle\SSH\Driver\Sftp;
+use Dazzle\SSH\Driver\Shell;
+use Dazzle\Throwable\Exception\Logic\InvalidArgumentException;
+use Dazzle\Throwable\Exception\Runtime\ExecutionException;
 use Error;
 use Exception;
 

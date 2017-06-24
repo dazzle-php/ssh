@@ -1,13 +1,13 @@
 <?php
 
-namespace Kraken\SSH\Auth;
+namespace Dazzle\SSH\Auth;
 
-use Kraken\SSH\SSH2AuthInterface;
+use Dazzle\SSH\SSH2AuthInterface;
 
 /**
- * Username based SSH2 authentication.
+ * Agent based SSH2 authentication
  */
-class SSH2None implements SSH2AuthInterface
+class SSH2Agent implements SSH2AuthInterface
 {
     /**
      * @var string
@@ -15,6 +15,8 @@ class SSH2None implements SSH2AuthInterface
     protected $username;
 
     /**
+     * Constructor
+     *
      * @param string $username The authentication username
      */
     public function __construct($username)
@@ -28,6 +30,9 @@ class SSH2None implements SSH2AuthInterface
      */
     public function authenticate($conn)
     {
-        return true === @ssh2_auth_none($conn, $this->username);
+        return @ssh2_auth_agent(
+            $conn,
+            $this->username
+        );
     }
 }
