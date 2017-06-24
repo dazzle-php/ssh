@@ -9,12 +9,20 @@ php:
   - 7.1
 
 before_install:
+  - sudo ln -s /home/travis/.phpenv/versions/$(phpenv version-name)/bin/phpize /usr/bin/
+  - sudo ln -s /home/travis/.phpenv/versions/$(phpenv version-name)/bin/php-config /usr/bin/
   - export PHP_MAJOR="$(echo $TRAVIS_PHP_VERSION | cut -d '.' -f 1,2)"
 
 install:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --ignore-platform-reqs
+  - sudo apt-get -qq update
+  - bash build-ci/install_prereqs_$PHP_MAJOR.sh
   - php -m
+
+before_script:
+  - ulimit -c unlimited -S || true
+  - echo '/tmp/core_%e.%p' | sudo tee /proc/sys/kernel/core_pattern &> /dev/null
 
 script:
   - vendor/bin/phpunit -d memory_limit=1024M --coverage-text --coverage-clover=coverage.clover
@@ -22,3 +30,11 @@ script:
 after_script:
   - if [ "$TRAVIS_PHP_VERSION" = "7.1" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
   - if [ "$TRAVIS_PHP_VERSION" = "7.1" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+
+after_failure:
+  - bash build-ci/install_failure.sh
+
+addons:
+  apt:
+    packages:
+      - gdb

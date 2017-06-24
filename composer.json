@@ -35,7 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dazzle\\SSH\\": "src/Event",
+            "Dazzle\\SSH\\": "src/SSH",
             "Dazzle\\SSH\\Test\\": "test"
         }
     },
