@@ -1,4 +1,4 @@
-# Dazzle Asynchronous SSH
+# Dazzle Async SSH
 
 [![Build Status](https://travis-ci.org/dazzle-php/ssh.svg)](https://travis-ci.org/dazzle-php/ssh)
 [![Code Coverage](https://scrutinizer-ci.com/g/dazzle-php/ssh/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/dazzle-php/ssh/?branch=master)
