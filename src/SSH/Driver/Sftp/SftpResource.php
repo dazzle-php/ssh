@@ -5,7 +5,7 @@ namespace Dazzle\SSH\Driver\Sftp;
 use Dazzle\Loop\LoopAwareTrait;
 use Dazzle\SSH\SSH2DriverInterface;
 use Dazzle\SSH\SSH2ResourceInterface;
-use Dazzle\Stream\Stream;
+use Dazzle\Stream\Sync\Stream;
 use Dazzle\Throwable\Exception\Runtime\ReadException;
 use Dazzle\Throwable\Exception\Runtime\WriteException;
 use Dazzle\Util\Buffer\Buffer;

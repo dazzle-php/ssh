@@ -2,9 +2,9 @@
 
 namespace Dazzle\SSH;
 
-use Dazzle\Stream\AsyncStreamInterface;
+use Dazzle\Stream\StreamInterface;
 
-interface SSH2ResourceInterface extends AsyncStreamInterface
+interface SSH2ResourceInterface extends StreamInterface
 {
     /**
      * @return string
